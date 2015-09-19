@@ -13,6 +13,7 @@ class Job:
         self.config = config
         self.command = command
         self.user_info = user_info
+        self.events_log = "events.log"
         self.user_logdir = os.path.join("/var/log/recron", user_info.pw_name)
         self.job_logfile = "%s-%s" % (now.strftime("%Y-%m-%d-%H-%M"), str(uuid.uuid4()))
         
@@ -30,9 +31,10 @@ class Job:
         job_process = Popen(("recron-launch", json.dumps(job_args)))
         job_args['status'] = job_process.wait()
         
-        self.config.daemon_event_log_file.write(json.dumps(job_args).encode('utf-8'))
-        self.config.daemon_event_log_file.write(b'\n')
-        self.config.daemon_event_log_file.flush()
+        with open(os.path.join(self.user_logdir, self.events_log), 'ab') as log:
+            log.write(json.dumps(job_args).encode('utf-8'))
+            log.write(b'\n')
+            log.flush()
 
 
 class Launcher(MinuteTimer):

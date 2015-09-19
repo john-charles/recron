@@ -14,8 +14,6 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.WARNING)
     
     config.active_user_list = ['root', 'john-charles']
-    config.daemon_event_log = "/var/log/recron/events.log"
-    config.daemon_event_log_file = open(config.daemon_event_log, 'ab')
     
     launcher = Launcher(config)
     launcher.start()
