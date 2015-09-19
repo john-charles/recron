@@ -1,4 +1,5 @@
 import time
+import logging
 from threading import Event, Thread
 
 def get_current_minute():
@@ -26,6 +27,7 @@ class MinuteTrigger(Thread):
         while self.running:
             
             current_minute = get_current_minute()
+            
             if self.current_minute != current_minute:
                 self.current_minute = current_minute
                 self.event.set()

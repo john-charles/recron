@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+"""
+This script launches a cron command as the owning crontab
+"""
+
+import os, pwd, sys, json, subprocess
+
+def change_user(job_info):
+    
+    user_environ = {}
+    user_id = job_info["user_id"]
+    user_info = pwd.getpwuid(user_id)
+    
+    os.setuid(user_id)
+    
+    user_environ['HOME'] = user_info.pw_dir
+    user_environ['SHELL'] = user_info.pw_shell
+    
+    return user_environ
+
+def run_command(job_info, user_environ):
+    
+    shell_process = subprocess.Popen(job_info['command'], shell=True,
+        cwd=user_environ['HOME'], env=user_environ, stdin=subprocess.DEVNULL)
+    
+    return shell_process.wait()
+    
+
+if __name__ == '__main__':
+    
+    job_info = json.loads(sys.argv[1])
+    user_environ = change_user(job_info)
+    command_result = run_command(job_info, user_environ)
+    
+    sys.exit(command_result)
+    
+    
+
+
+
+
+
+
