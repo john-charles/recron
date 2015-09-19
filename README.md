@@ -1,15 +1,10 @@
 # recron - A Simple yet powerful cron replacement.
 
-recron follows crontab syntax and should be a drop in replacement on any
-linux or unix system. But it is only supported by the author on debian/ubuntu.
+recron follows crontab syntax and aims be a drop in replacement from cron.
+It is only supported by the author on debian and ubuntu.
 
-It aims to be simple, starting from *what do you need in a scheduler on a laptop*
-Meaning that things like email support are down on the road map as optional extras
-and early versions will focus strictly on things like simple file logging nothing
-more complicated.
-
-But it's design is module with the goal of having a plugin api to one day support
-email notifications, or even a we portal like jenkins.
+It aims to be simple, starting from *what do you need in a scheduler on a laptop.*
+And then implementing more advance features later after the core is solid.
 
 Road Map of Goals:
     
