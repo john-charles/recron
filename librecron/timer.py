@@ -1,5 +1,7 @@
+import sys
 import time
 import logging
+import traceback
 from threading import Event, Thread
 
 def get_current_minute():
@@ -56,7 +58,7 @@ class MinuteTimer(Thread):
             try:
                 self.task()
             except Exception as e:
-                print(e)
+                traceback.print_exc(file=sys.stderr)
                 
             self.__event.clear()
             self.__event.wait()

@@ -5,6 +5,9 @@ This script launches a cron command as the owning crontab
 
 import os, pwd, sys, json, subprocess
 
+def open_log(job_info):
+    return open(job_info['logfile'], 'wb')
+
 def change_user(job_info):
     
     user_environ = {}
@@ -18,10 +21,10 @@ def change_user(job_info):
     
     return user_environ
 
-def run_command(job_info, user_environ):
+def run_command(job_info, log_file, user_environ):
     
-    shell_process = subprocess.Popen(job_info['command'], shell=True,
-        cwd=user_environ['HOME'], env=user_environ, stdin=subprocess.DEVNULL)
+    shell_process = subprocess.Popen(job_info['command'], shell=True, cwd=user_environ['HOME'],
+        stdout=log_file.fileno(), env=user_environ, stdin=subprocess.DEVNULL)
     
     return shell_process.wait()
     
@@ -29,9 +32,12 @@ def run_command(job_info, user_environ):
 if __name__ == '__main__':
     
     job_info = json.loads(sys.argv[1])
-    user_environ = change_user(job_info)
-    command_result = run_command(job_info, user_environ)
     
+    log_file = open_log(job_info)
+    user_environ = change_user(job_info)
+    command_result = run_command(job_info, log_file, user_environ)
+    
+    log_file.close()
     sys.exit(command_result)
     
     

@@ -7,15 +7,19 @@ from subprocess import Popen, STDOUT
 
 class Job:
     
-    def __init__(self, user_info, command, now):
+    def __init__(self, user_info, command, now, config):
 
         self.now = now
+        self.config = config
         self.command = command
         self.user_info = user_info
         self.user_logdir = os.path.join("/var/log/recron", user_info.pw_name)
         self.job_logfile = "%s-%s" % (now.strftime("%Y-%m-%d-%H-%M"), str(uuid.uuid4()))
         
     def run(self):
+        
+        if not os.path.exists(self.user_logdir):
+            os.makedirs(self.user_logdir)
         
         job_args = {
             'command': self.command,
@@ -26,8 +30,9 @@ class Job:
         job_process = Popen(("recron-launch", json.dumps(job_args)))
         job_args['status'] = job_process.wait()
         
-        print(json.dumps(job_args))
-        
+        self.config.daemon_event_log_file.write(json.dumps(job_args).encode('utf-8'))
+        self.config.daemon_event_log_file.write(b'\n')
+        self.config.daemon_event_log_file.flush()
 
 
 class Launcher(MinuteTimer):
@@ -49,7 +54,7 @@ class Launcher(MinuteTimer):
         schedule.get_prev()
         
         if self.time_matches(schedule.get_current(), now):
-            job = Job(user_info, job_info.command, now)
+            job = Job(user_info, job_info.command, now, self.config)
             job.run()
         
         
@@ -64,8 +69,8 @@ class Launcher(MinuteTimer):
         if not os.path.exists(user_crontab):
             logging.warning("crontab for: " + username + " not found!")
         else:
-            logging.debug("crontab for: " + username)
             crontab = CronTab(tabfile=user_crontab)
+            logging.debug("loaded crontab for: " + username)
             
             for job in crontab.crons:
                 self.run_job(user_info, job, now)
