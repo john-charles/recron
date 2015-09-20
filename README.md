@@ -21,3 +21,9 @@ logs to /var/log/recron in a machine parsable manor.
     recron running 2 total jobs
     412 total runs (100% healthy) /bin/ls
      10 total runs (100% healthy) DISPLAY=:0 xeyes &
+     
+## Roadmap
+
+1. Proper debian packaging for Debian and Ubuntu 14.04 LTS and Ubuntu Current.
+2. Basic configuration options at the system level and user level.
+3. make `recron status <job number>` print details and status about one job.
