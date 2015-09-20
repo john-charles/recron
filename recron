@@ -1,3 +1,72 @@
 #!/usr/bin/env python3
 
-print("Not Implemented")
+import getpass
+from librecron.events import EventList
+from colorama import Fore, Back, Style
+from colorama import init as coloramainit
+
+class StringBuilder:
+    
+    chunks = None
+    
+    def __init__(self):
+        self.chunks = []
+        
+    def append(self, text):
+        self.chunks.append(text)
+    
+    def space(self):
+        self.chunks.append(" ")
+    
+    def do_print(self):
+        print("".join(self.chunks))
+
+
+if __name__ == '__main__':
+    
+    coloramainit(autoreset=True)
+    
+    event_list = EventList(getpass.getuser())
+    event_list.load_events()
+    
+    jobs = event_list.get_jobs()
+    
+    sb = StringBuilder()
+    
+    sb.append(Style.BRIGHT)
+    sb.append(Fore.BLUE)
+    
+    sb.append("recron")
+    sb.space()
+    
+    sb.append(Style.RESET_ALL)
+    
+    sb.append("running %s total jobs" % len(jobs))
+    sb.do_print()
+    
+    
+    
+    
+    
+    for job in jobs:
+        job_runs, job_health = event_list.get_job_health(job)
+        
+        sb = StringBuilder()
+        sb.append(Style.BRIGHT)
+        sb.append("%03s total runs" % job_runs)
+        sb.space()
+        
+        if job_health == 1.0:
+            sb.append(Fore.GREEN)
+        elif job_health < 1.0 and job_health > 0.8:
+            sb.append(Fore.YELLOW)
+        elif job_health < 0.8:
+            sb.append(Fore.RED)
+            
+        sb.append("(%03s%% healthy)" % (job_health * 100))
+        sb.space()
+        
+        sb.append(Style.RESET_ALL)
+        sb.append(job)
+        
+        sb.do_print()

@@ -4,6 +4,13 @@ import os, json
 LOG_DIR = "/var/log/recron"
 EVENTS_LOG = "events.log"
 
+def get_job_filter(command):
+    
+    def job_filter(job_info):
+        return job_info['command'] == command
+    
+    return job_filter
+
 class EventList:
     
     def __init__(self, username):
@@ -18,17 +25,26 @@ class EventList:
             
             for line in events_stream.readlines():
                 line = line.decode('utf-8').strip()
-                self.events_list.append(json.loads(line))
+                self.event_list.append(json.loads(line))
                 
-    def get_job_health(self):
+    def get_job_health(self, command):
         
         count_success = 0
-        last_five = self.events_list[-5:]
+        job_runs = list(filter(get_job_filter(command), self.event_list))
         
-        for event in last_five:
+        for event in job_runs[-5:]:
             if event['status'] == 0:
                 count_success += 1
                 
-        return float(count_success) / len(last_five)
+        return len(job_runs), float(count_success) / len(job_runs[-5:])
+    
+    def get_jobs(self):
+        
+        job_set = set()
+        
+        for event in self.event_list:
+            job_set.add(event['command'])
+            
+        return job_set
         
     
