@@ -45,6 +45,6 @@ class EventList:
         for event in self.event_list:
             job_set.add(event['command'])
             
-        return job_set
+        return sorted(job_set)
         
     

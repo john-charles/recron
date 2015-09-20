@@ -63,7 +63,7 @@ if __name__ == '__main__':
         elif job_health < 0.8:
             sb.append(Fore.RED)
             
-        sb.append("(%03s%% healthy)" % (job_health * 100))
+        sb.append("(%03s%% healthy)" % int(job_health * 100))
         sb.space()
         
         sb.append(Style.RESET_ALL)
