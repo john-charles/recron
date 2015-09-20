@@ -14,3 +14,10 @@ logs to /var/log/recron in a machine parsable manor.
 - Each user has a recron crontab in their home directory.
 - Each crontab is logged to a separate user directory.
 - Command line status command which can be used to easily check job status.
+
+## Simple status command example output
+
+    > recron
+    recron running 2 total jobs
+    412 total runs (100% healthy) /bin/ls
+     10 total runs (100% healthy) DISPLAY=:0 xeyes &
