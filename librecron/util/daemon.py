@@ -2,7 +2,7 @@
 Generic linux daemon base class for python 3.x.
 """
 
-import sys, os, time, atexit, signal
+import sys, os, time, atexit, signal, errno
 
 class Daemon:
     """A generic daemon class.
@@ -118,16 +118,13 @@ class Daemon:
             with open(self.pidfile,'r') as pf:
                 pid = int(pf.read().strip())
         except IOError:
-            pid = None
+            return False
             
         try:
             os.kill(pid, 0)
-        except OSError:
-            return False
-        except TypeError:
-            return False
-        else:
             return True
+        except OSError as err:
+            return err.errno == errno.EPERM
         
         
 
