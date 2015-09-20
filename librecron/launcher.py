@@ -22,8 +22,6 @@ class Job:
         if not os.path.exists(self.user_logdir):
             os.makedirs(self.user_logdir)
         
-        logging.debug("running: PATH = " + os.environ['PATH'])
-        
         job_args = {
             'command': self.command,
             'user_id': self.user_info.pw_uid,

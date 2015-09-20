@@ -111,6 +111,25 @@ class Daemon:
             else:
                 print (str(err.args))
                 sys.exit(1)
+                
+    def running(self):
+        
+        try:
+            with open(self.pidfile,'r') as pf:
+                pid = int(pf.read().strip())
+        except IOError:
+            pid = None
+            
+        try:
+            os.kill(pid, 0)
+        except OSError:
+            return False
+        except TypeError:
+            return False
+        else:
+            return True
+        
+        
 
     def restart(self):
         """Restart the daemon."""

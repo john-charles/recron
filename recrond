@@ -10,14 +10,26 @@ if __name__ == '__main__':
     
     
     logging.basicConfig(level=logging.DEBUG)
+    daemon = RecronDaemon()
     
     if os.getuid() != 0:
-        print("Error, this daemon needs to run as root!")
-        sys.exit(1)
-        
-    else:
-        daemon = RecronDaemon()
-        daemon.start()
+            print("Error, this daemon needs to run as root!")
+            sys.exit(1)
     
+    if sys.argv[1] == 'start':
+        daemon.start()
+        
+    elif sys.argv[1] == 'status':
+        if daemon.running():
+            print("recron is running...")
+        else:
+            print("recron is not running.")
+            
+    elif sys.argv[1] == 'stop':
+        daemon.stop()
+        
+    elif sys.argv[1] == 'restart':
+        daemon.restart()
+
     
     
