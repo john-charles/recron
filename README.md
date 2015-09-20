@@ -6,7 +6,7 @@ It is only supported by the author on debian and ubuntu.
 ## Rationale
 
 The `crontab` is simple and straightforward. But cron is not. Why do you
-need to install postfix to use cron? Recron is a stand alone daemon which
+need to install postfix to use cron? Recron is a standalone daemon which
 logs to /var/log/recron in a machine parsable manor. 
 
 ## Features
