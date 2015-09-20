@@ -22,13 +22,15 @@ class Job:
         if not os.path.exists(self.user_logdir):
             os.makedirs(self.user_logdir)
         
+        logging.debug("running: PATH = " + os.environ['PATH'])
+        
         job_args = {
             'command': self.command,
             'user_id': self.user_info.pw_uid,
             'logfile': os.path.join(self.user_logdir, self.job_logfile)
         }
         
-        job_process = Popen(("recron-launch", json.dumps(job_args)))
+        job_process = Popen(("/home/john-charles/Projects/recron/recron-launch", json.dumps(job_args)))
         job_args['status'] = job_process.wait()
         
         with open(os.path.join(self.user_logdir, self.events_log), 'ab') as log:

@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
-import logging
-from librecron.launcher import Launcher
 
-class Config:
-    
-    active_user_list = None
-    daemon_event_log = None
-    daemon_event_log_file = None
+import os
+import sys
+import logging
+from librecron.daemon import RecronDaemon
+
 
 if __name__ == '__main__':
     
-    config = Config()
-    logging.basicConfig(level=logging.WARNING)
     
-    config.active_user_list = ['root', 'john-charles']
+    logging.basicConfig(level=logging.DEBUG)
     
-    launcher = Launcher(config)
-    launcher.start()
+    if os.getuid() != 0:
+        print("Error, this daemon needs to run as root!")
+        sys.exit(1)
+        
+    else:
+        daemon = RecronDaemon()
+        daemon.start()
+    
+    
+    
