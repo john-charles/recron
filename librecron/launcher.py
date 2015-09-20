@@ -28,7 +28,7 @@ class Job:
             'logfile': os.path.join(self.user_logdir, self.job_logfile)
         }
         
-        job_process = Popen(("/home/john-charles/Projects/recron/recron-launch", json.dumps(job_args)))
+        job_process = Popen(("recron-launch", json.dumps(job_args)))
         job_args['status'] = job_process.wait()
         
         with open(os.path.join(self.user_logdir, self.events_log), 'ab') as log:
