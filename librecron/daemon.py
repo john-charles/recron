@@ -1,4 +1,6 @@
 
+import os
+
 from .launcher import Launcher
 from .util.daemon import Daemon
 
@@ -16,6 +18,8 @@ class RecronDaemon(Daemon):
         self.config = Config()
     
     def run(self):
+        
+        os.makedirs("/var/log/recron", mode=0x755, exist_ok=True)
         
         self.launcher = Launcher(self.config)
         self.launcher.start()
