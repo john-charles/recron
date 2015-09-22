@@ -5,6 +5,8 @@ from crontab import CronTab
 from .timer import MinuteTimer
 from subprocess import Popen, STDOUT
 
+TIME_PATTERN = "%Y-%m-%d-%H-%M"
+
 class Job:
     
     def __init__(self, user_info, command, now, config):
@@ -44,7 +46,8 @@ class Launcher(MinuteTimer):
         self.config = config
         
     def time_matches(self, job, now):
-        return job.strftime("%Y-%m-%d-%H-%M") == now.strftime("%Y-%m-%d-%H-%M")
+        logging.debug("checking job", job.strftime(TIME_PATTERN), now.strftime(TIME_PATTERN)) 
+        return job.strftime(TIME_PATTERN) == now.strftime(TIME_PATTERN)
         
     def run_job(self, user_info, job_info, now):
         
