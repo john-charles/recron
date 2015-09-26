@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-import getpass
+import getpass, sys, os
+from subprocess import Popen
+from librecron.ui import choose_editor, DEFAULT_CRONTAB_TEXT
+from librecron.config import CONFIG
 from librecron.events import EventList
 from colorama import Fore, Back, Style
 from colorama import init as coloramainit
@@ -20,9 +23,8 @@ class StringBuilder:
     
     def do_print(self):
         print("".join(self.chunks))
-
-
-if __name__ == '__main__':
+        
+def print_status():
     
     coloramainit(autoreset=True)
     
@@ -52,10 +54,6 @@ if __name__ == '__main__':
     
     sb.do_print()
     
-    
-    
-    
-    
     for job in jobs:
         job_runs, job_health = event_list.get_job_health(job)
         
@@ -78,3 +76,38 @@ if __name__ == '__main__':
         sb.append(job)
         
         sb.do_print()
+        
+
+
+
+def start_editor():
+    
+    try:
+        editor = CONFIG.get_editor()
+    except KeyError:
+        editor = choose_editor()
+        CONFIG.set_editor(editor)
+        CONFIG.save()
+        
+    if not os.path.exists(CONFIG.user_crontab):
+        
+        with open(CONFIG.user_crontab, 'wb') as crontab_stream:
+            crontab_stream.write(DEFAULT_CRONTAB_TEXT.strip().encode("utf-8"))
+            
+    Popen((editor, CONFIG.user_crontab)).wait()
+        
+    
+    
+    
+
+
+if __name__ == '__main__':
+    
+    if "-e" in sys.argv:
+        start_editor()
+    else:
+        print_status()
+    
+    
+    
+    
