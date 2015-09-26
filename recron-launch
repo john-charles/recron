@@ -24,7 +24,7 @@ def change_user(job_info):
 def run_command(job_info, log_file, user_environ):
     
     shell_process = subprocess.Popen(job_info['command'], shell=True, cwd=user_environ['HOME'],
-        stdout=log_file.fileno(), env=user_environ, stdin=subprocess.DEVNULL)
+        stdout=log_file.fileno(), stderr=log_file.fileno(), env=user_environ, stdin=subprocess.DEVNULL)
     
     return shell_process.wait()
     

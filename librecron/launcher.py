@@ -46,7 +46,7 @@ class Launcher(MinuteTimer):
         self.config = config
         
     def time_matches(self, job, now):
-        logging.debug("checking job", job.strftime(TIME_PATTERN), now.strftime(TIME_PATTERN)) 
+        print("checking job", job.strftime(TIME_PATTERN) + " " + now.strftime(TIME_PATTERN)) 
         return job.strftime(TIME_PATTERN) == now.strftime(TIME_PATTERN)
         
     def run_job(self, user_info, job_info, now):

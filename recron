@@ -27,7 +27,11 @@ if __name__ == '__main__':
     coloramainit(autoreset=True)
     
     event_list = EventList(getpass.getuser())
-    event_list.load_events()
+    
+    try:
+        event_list.load_events()
+    except FileNotFoundError:
+        pass
     
     jobs = event_list.get_jobs()
     
@@ -41,7 +45,11 @@ if __name__ == '__main__':
     
     sb.append(Style.RESET_ALL)
     
-    sb.append("running %s total jobs" % len(jobs))
+    if len(jobs) == 0:
+        sb.append("no jobs have been run for this user yet")
+    else:
+        sb.append("running %s total jobs" % len(jobs))
+    
     sb.do_print()
     
     
