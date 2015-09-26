@@ -27,7 +27,7 @@ class Config:
     def save(self):
         
         if not os.path.exists(self.user_dir):
-            os.makedirs(self.user_dir, 0x0700)
+            os.makedirs(self.user_dir, 0o700)
         
         with open(self.user_file, "w") as config_output:
             self.parser.write(config_output)
