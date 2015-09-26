@@ -16,6 +16,9 @@ def change_user(job_info):
     
     os.setuid(user_id)
     
+    if user_id = 0:
+        user_environ['PATH'] = "/sbin"
+    
     user_environ['HOME'] = user_info.pw_dir
     user_environ['SHELL'] = user_info.pw_shell
     
@@ -34,6 +37,8 @@ if __name__ == '__main__':
     job_info = json.loads(sys.argv[1])
     
     log_file = open_log(job_info)
+    log_file.flush()
+    
     user_environ = change_user(job_info)
     command_result = run_command(job_info, log_file, user_environ)
     
