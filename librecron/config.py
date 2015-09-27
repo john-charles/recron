@@ -4,12 +4,18 @@ import os
 import configparser
 
 class Config:
+    
+    LOG_DIR = "/var/log/recron"
+    EVENTS_LOG = "events.log"
+    CRONTAB = "crontab"
+    CRONTAB_INI = "crontab.ini"
+    
         
     def __init__(self):
         
         self.user_dir = os.path.expanduser("~/.recron")
         self.user_file = os.path.join(self.user_dir, "config.ini")
-        self.user_crontab = os.path.join(self.user_dir, "crontab")
+        self.user_crontab = os.path.join(self.user_dir, self.CRONTAB)
         self.files = ("/etc/recron/config.ini", self.user_file)
         
         self.parser = configparser.ConfigParser()
