@@ -1,0 +1,39 @@
+As a developer I want recron to have a simple api.
+
+Specifically I want something that looks like this.
+
+import recron
+
+jobs = recron.get_jobs()
+
+for job in jobs:
+    
+    job.health > success percentage of last 5 executions 
+    job.status > SUCCESS|FAILURE|RUNNING
+    job.history > [job event, ... ]
+    job.runs_at > [ contab line ]
+    job.command > command to execute.
+    job.name
+        
+        If a job is created in the crontab this will be command with spaces, and special characters
+        replaced by underscore and dashes where appropriate.
+        
+        If the job has a name or is assigned a name it will be moved to crontab.ini where the name
+        will identify it's section in the ini file.
+        
+Job history will be a list of job execution objects with the following attrs:
+    
+    time, when did the job run.
+    duration, how long did it take, -1 if job is still running.
+    status, did it succeed or fail. SUCCESS|FAILURE|RUNNING
+    status_code, the proccess execution code. None if the job is running.
+    output, returns an open read stream with the jobs stdout, and stderr caputred.
+    
+recron.connect("job_start|job_stop|job_fail|job_succeed", [name optional], callback)
+
+    run a callback when a job stat chanes per the first argument.
+    
+    job_start - when any job starts, or when name is passed the named job starts.
+    job_stop = when a job finishes, regardless of error code.
+    job_fail - when a job stopped and failed
+    job_succeed - when a job stopped and succeeded
