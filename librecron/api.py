@@ -106,7 +106,6 @@ class Api:
     def map_job(self, job_line):
         
         crontab = CronTab(tab=job_line)
-        print(crontab, job_line)
         cronentry = crontab.crons[0]
         
         history_events = filter(lambda e: e['command'] == cronentry.command,
