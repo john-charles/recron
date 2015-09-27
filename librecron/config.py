@@ -1,6 +1,8 @@
 __all__ = ['CONFIG']
 
 import os
+import pwd
+import getpass
 import configparser
 
 class Config:
@@ -13,7 +15,9 @@ class Config:
         
     def __init__(self):
         
-        self.user_dir = os.path.expanduser("~/.recron")
+        self.username = getpass.getuser()
+        self.userinfo = pwd.getpwnam(self.username)
+        self.user_dir = os.path.join(self.userinfo.pw_dir, ".recron")
         self.user_file = os.path.join(self.user_dir, "config.ini")
         self.user_crontab = os.path.join(self.user_dir, self.CRONTAB)
         self.files = ("/etc/recron/config.ini", self.user_file)

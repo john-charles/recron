@@ -4,7 +4,7 @@ import getpass, sys, os
 from subprocess import Popen
 from librecron.ui import choose_editor, DEFAULT_CRONTAB_TEXT
 from librecron.config import CONFIG
-from librecron.events import EventList
+from librecron.api import Api
 from colorama import Fore, Back, Style
 from colorama import init as coloramainit
 
@@ -28,14 +28,8 @@ def print_status():
     
     coloramainit(autoreset=True)
     
-    event_list = EventList(getpass.getuser())
-    
-    try:
-        event_list.load_events()
-    except FileNotFoundError:
-        pass
-    
-    jobs = event_list.get_jobs()
+    api = Api()
+    jobs = api.get_jobs()
     
     sb = StringBuilder()
     
@@ -55,7 +49,8 @@ def print_status():
     sb.do_print()
     
     for job in jobs:
-        job_runs, job_health = event_list.get_job_health(job)
+        
+        job_runs, job_health = job.health
         
         sb = StringBuilder()
         sb.append(Style.BRIGHT)
@@ -73,7 +68,7 @@ def print_status():
         sb.space()
         
         sb.append(Style.RESET_ALL)
-        sb.append(job)
+        sb.append(job.command)
         
         sb.do_print()
         

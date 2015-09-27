@@ -2,6 +2,8 @@
 This will eventually be refactored out somewhere ehse.
 '''
 import io
+import os
+import json
 from .config import CONFIG
 from crontab import CronTab
 
@@ -35,7 +37,7 @@ class Job:
     
     def __init__(self, cronentry, history_events):
         self.cronentry = cronentry
-        self.history = map(lambda e: JobExecution(e), history_events)
+        self.history = list(map(lambda e: JobExecution(e), history_events))
     
     @property
     def status(self):
@@ -51,7 +53,7 @@ class Job:
             if event.status == 'SUCCESS':
                 count_success += 1
                 
-        return len(health_history), float(count_success) / len(health_history)
+        return len(self.history), float(count_success) / (len(health_history) or 1)
     
     @property
     def schedule(self):
@@ -66,44 +68,60 @@ class Api:
     
     def load_events(self):
         
-        events_file = os.path.join(CONFIG.LOG_DIR, self.username, CONFIG.EVENTS_LOG)
+        events_list = []
+        events_file = os.path.join(CONFIG.LOG_DIR, CONFIG.username, CONFIG.EVENTS_LOG)
         
-        with open(events_file, 'rb') as events_stream:
+        try:
+        
+            with open(events_file, 'rb') as events_stream:
+                
+                for line in events_stream.readlines():
+                    line = line.decode('utf-8').strip()
+                    events_list.append(json.loads(line))
+                    
+            self.events_list = events_list
             
-            for line in events_stream.readlines():
-                line = line.decode('utf-8').strip()
-                self.event_list.append(json.loads(line))
+        except FileNotFoundError:
+            pass
         
+        return self.events_list
+            
     def load_crontab(self):
         
         tabs = []
         
-        with open(CONFIG.user_crontab, 'rb') as crontab_stream:
-            
-            for line in crontab_stream.readlines():
-                if not line.strip().startswith("#"):
-                    tabs.append(Crontab(tab=line.strip()))
+        try:
+        
+            with open(CONFIG.user_crontab, 'rb') as crontab_stream:
+                
+                for line in crontab_stream.readlines():
+                    if not line.strip().startswith(b'#'):
+                        tabs.append(line.strip().decode("utf-8"))
+                        
+        except FileNotFoundError:
+            pass
                     
         return tabs
     
     def map_job(self, job_line):
         
-        crontab = CrontTab(tab=job_line)
+        crontab = CronTab(tab=job_line)
+        print(crontab, job_line)
         cronentry = crontab.crons[0]
         
         history_events = filter(lambda e: e['command'] == cronentry.command,
-                                self.events_list)
+                                self.load_events())
         
         job = Job(cronentry, history_events)
         job.command = cronentry.command
         
         return job
     
-    def __iter__(self):
+    def get_jobs(self):
         
         tabs = self.load_crontab()
-        return map(self.map_job, tabs)
-        
+        jobs = map(self.map_job, tabs)
+        return sorted(jobs, key=lambda job: job.command)
     
     def create_job(self, name):
         return None
