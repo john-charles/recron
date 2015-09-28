@@ -48,11 +48,19 @@ def print_status():
     
     sb.do_print()
     
+    index = 0
+    
     for job in jobs:
         
+        sb = StringBuilder()
         job_runs, job_health = job.health
         
-        sb = StringBuilder()
+        index += 1
+        
+        sb.append(str(index))
+        sb.append(')')
+        sb.space()
+        
         sb.append(Style.BRIGHT)
         sb.append("%03s total runs" % job_runs)
         sb.space()
@@ -90,16 +98,30 @@ def start_editor():
             crontab_stream.write(DEFAULT_CRONTAB_TEXT.strip().encode("utf-8"))
             
     Popen((editor, CONFIG.user_crontab)).wait()
-        
     
     
-    
+def print_output(index):
 
+    try:
+        
+        job = Api().get_jobs()[index-1]
+        output = job.history[0].get_output()
+        sys.stdout.write(output.read().decode('utf-8'))
+        sys.stdout.flush()
+        
+    except IndexError:
+        print("Unknown job %s" % index)
+    
+    
+    
 
 if __name__ == '__main__':
     
     if "-e" in sys.argv:
         start_editor()
+    elif 'output' in sys.argv:
+        index = sys.argv[-1]
+        print_output(int(index))        
     else:
         print_status()
     

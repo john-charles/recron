@@ -34,6 +34,7 @@ class Job:
     
     name = None
     command = None
+    history = None
     
     def __init__(self, cronentry, history_events):
         self.cronentry = cronentry
