@@ -105,7 +105,7 @@ def print_output(index):
     try:
         
         job = Api().get_jobs()[index-1]
-        output = job.history[0].get_output()
+        output = job.history[-1].get_output()
         sys.stdout.write(output.read().decode('utf-8'))
         sys.stdout.flush()
         
